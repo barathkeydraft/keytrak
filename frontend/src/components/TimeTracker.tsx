@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Box, Typography, Stack, Chip } from '@mui/material';
+import { Box, Button, Typography, Stack, Paper, Chip, IconButton, useTheme } from '@mui/material';
+import {
+  PlayArrow as PlayIcon,
+  Stop as StopIcon,
+  Coffee as BreakIcon,
+  Timer as TimerIcon,
+  AccessTime as ClockIcon,
+  Pause,
+} from '@mui/icons-material';
 import axios from '../config/axios';
 import TaskSelect from './TaskSelect';
 
@@ -28,6 +36,8 @@ const TimeTracker: React.FC = () => {
   const [selectedTaskId, setSelectedTaskId] = useState<string>('');
   const [elapsedTime, setElapsedTime] = useState<string>('00:00:00');
   const [dailyTotal, setDailyTotal] = useState<string>('00:00:00');
+  const [dailyEntries, setDailyEntries] = useState<TimeLog[]>([]);
+  const [isBreak, setIsBreak] = useState(false);
 
   // Check for active session on component mount
   useEffect(() => {
@@ -45,6 +55,7 @@ const TimeTracker: React.FC = () => {
           if (response.data.taskId) {
             setSelectedTaskId(response.data.taskId);
           }
+          setIsBreak(response.data.type === 'BREAK');
         }
       } catch (error) {
         console.error('Error checking active session:', error);
@@ -81,6 +92,7 @@ const TimeTracker: React.FC = () => {
           .toString()
           .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
       );
+      setDailyEntries(logs);
     } catch (error) {
       console.error('Error calculating daily total:', error);
     }
@@ -128,6 +140,7 @@ const TimeTracker: React.FC = () => {
         type,
         taskId: response.data.taskId
       });
+      setIsBreak(type === 'BREAK');
     } catch (error) {
       console.error('Failed to start timer:', error);
       alert('Failed to start timer. Please try again.');
@@ -152,108 +165,119 @@ const TimeTracker: React.FC = () => {
   };
 
   return (
-    <Box
-      sx={{
+    <Paper 
+      elevation={0} 
+      sx={{ 
+        p: 3,
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        gap: 2,
-        p: 3,
-        border: '1px solid #e0e0e0',
+        gap: 3,
         borderRadius: 2,
-        maxWidth: 400,
-        margin: '0 auto',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        bgcolor: 'background.paper',
+        border: '1px solid',
+        borderColor: 'divider'
       }}
     >
-      <Typography variant="h4" component="div" sx={{ color: '#333' }}>
-        Time Tracker
-      </Typography>
-      
-      {isTracking && (
-        <Chip 
-          label={currentSession.type}
-          color={currentSession.type === 'WORK' ? 'primary' : 'secondary'}
-          sx={{ mb: 1 }}
-        />
-      )}
-      
-      <Typography
-        variant="h2"
-        component="div"
-        sx={{
-          fontFamily: 'monospace',
-          color: isTracking ? (currentSession.type === 'WORK' ? '#1976d2' : '#9c27b0') : '#666',
-          fontWeight: 'bold',
-        }}
-      >
-        {elapsedTime}
-      </Typography>
-
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
-        <Typography variant="subtitle1" align="center">
-          Today's Total Work Hours: <strong>{dailyTotal}</strong>
-        </Typography>
-
-        {!isTracking && (
-          <TaskSelect
-            value={selectedTaskId}
-            onChange={(taskId) => setSelectedTaskId(taskId)}
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <TimerIcon color="primary" />
+        <Typography variant="h6" component="h2">Time Tracker</Typography>
+        {isTracking && (
+          <Chip
+            size="small"
+            icon={isBreak ? <BreakIcon fontSize="small" /> : <ClockIcon fontSize="small" />}
+            label={isBreak ? 'Break' : 'Work'}
+            color={isBreak ? 'secondary' : 'primary'}
+            sx={{ ml: 'auto' }}
           />
         )}
-        
-        <Stack direction="row" spacing={2} justifyContent="center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleStartTimer('WORK')}
-            disabled={isTracking}
-            sx={{
-              minWidth: '120px',
-              fontSize: '1.1rem',
-              '&:disabled': {
-                backgroundColor: '#e0e0e0',
-                color: '#666',
-              },
-            }}
-          >
-            Start Work
-          </Button>
-          
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => handleStartTimer('BREAK')}
-            disabled={isTracking}
-            sx={{
-              minWidth: '120px',
-              fontSize: '1.1rem',
-              '&:disabled': {
-                backgroundColor: '#e0e0e0',
-                color: '#666',
-              },
-            }}
-          >
-            Start Break
-          </Button>
-          
-          {isTracking && (
+      </Stack>
+
+      <Box sx={{ textAlign: 'center', py: 2 }}>
+        <Typography variant="h3" component="div" color="text.primary" sx={{ fontWeight: 'medium', letterSpacing: 1 }}>
+          {elapsedTime}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          Today's Total: {dailyTotal}
+        </Typography>
+      </Box>
+
+      <Stack spacing={2}>
+        {!isTracking ? (
+          <>
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<PlayIcon />}
+              onClick={() => handleStartTimer('WORK')}
+              sx={{ py: 1.5 }}
+            >
+              Start Work
+            </Button>
             <Button
               variant="outlined"
-              color="error"
-              onClick={handleStopTimer}
-              sx={{
-                minWidth: '120px',
-                fontSize: '1.1rem',
-              }}
+              fullWidth
+              startIcon={<BreakIcon />}
+              onClick={() => handleStartTimer('BREAK')}
+              sx={{ py: 1.5 }}
             >
-              Stop
+              Start Break
             </Button>
-          )}
-        </Stack>
-      </Box>
-    </Box>
+          </>
+        ) : (
+          <Button
+            variant="contained"
+            color="error"
+            fullWidth
+            startIcon={<StopIcon />}
+            onClick={handleStopTimer}
+            sx={{ py: 1.5 }}
+          >
+            Stop {isBreak ? 'Break' : 'Work'}
+          </Button>
+        )}
+      </Stack>
+
+      {dailyEntries.length > 0 && (
+        <Box sx={{ mt: 'auto' }}>
+          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+            Today's Sessions
+          </Typography>
+          <Stack spacing={1}>
+            {dailyEntries.slice(-3).map((entry, index) => (
+              <Box
+                key={index}
+                sx={{
+                  p: 1.5,
+                  borderRadius: 1,
+                  bgcolor: 'background.default',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}
+              >
+                {entry.type === 'BREAK' ? (
+                  <BreakIcon fontSize="small" color="secondary" />
+                ) : (
+                  <ClockIcon fontSize="small" color="primary" />
+                )}
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography variant="body2" color="text.primary">
+                    {entry.type.charAt(0).toUpperCase() + entry.type.slice(1)}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {entry.startTime ? new Date(entry.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                  </Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary">
+                  {entry.endTime ? new Date(entry.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
+        </Box>
+      )}
+    </Paper>
   );
 };
 

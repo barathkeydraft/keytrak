@@ -71,11 +71,10 @@ FR-TASK-003: Tasks must have a status (Planned, In-Progress, Complete).
 FR-TASK-004: The system must allow employees to update the status of a task.
 FR-TASK-005: Employees can create a own task and select in the drop-down list when the starting the work timer starts, tasks assigned for them can be shown in a table which are assigned for today
 
-3.1.4 Reporting:
+3.1.4 Reporting: (Pending Need Tweaks)
 
 FR-REPORT-001: The system must generate an automated end-of-day summary report for each employee.
 FR-REPORT-002: The end-of-day report must include total work hours, tasks completed, and any notes entered by the employee.
-
 FR-REPORT-003: The system must provide a report showing work hours by employee.
 FR-REPORT-004: The system must provide a report showing tasks completed each day.
 FR-REPORT-005: Employees must be able to add simple notes to the end-of-day summary.
@@ -88,6 +87,17 @@ FR-ADMIN-003: Admins must have access to employee time logs.
 FR-ADMIN-004: Admins should be able to create, edit, and delete employees.
 FR-ADMIN-005: Admins should be able to assign roles to employees.
 FR-ADMIN-006: Admins should be able to view all tasks.
+
+3.1.6 Attendance Module: 
+
+FR-ATTENDANCE-001: Employees must be able to log in and log out for the day via the system interface.
+FR-ATTENDANCE-002: The system must capture the timestamp of login and logout.
+FR-ATTENDANCE-003: Each login and logout entry must capture the employee’s geographical location (latitude and longitude).
+FR-ATTENDANCE-004: The front-end must display the most recent login and logout time along with the captured location.
+FR-ATTENDANCE-005: The system must prevent multiple logins without logging out first.
+FR-ATTENDANCE-006: Logged-in employees can see a message like:
+“You logged in at 9:10 AM from [Location Name / Lat, Long]”
+“You logged out at 5:12 PM from [Location Name / Lat, Long]”
 
 3.2 Non-Functional Requirements:
 

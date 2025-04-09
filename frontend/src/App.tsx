@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme, CircularProgress, Box } from '@mui/material';
+import { ThemeProvider, CssBaseline, CircularProgress, Box } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -11,24 +11,15 @@ import MainLayout from './components/MainLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import Tasks from './pages/Tasks';
+import TimeLog from './pages/TimeLog';
 import UserManagement from './components/UserManagement';
 import Reports from './pages/Reports';
+import theme from './theme';
 
 // Initialize dayjs plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-// Create theme
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#9c27b0',
-    },
-  },
-});
 
 // Protected Route wrapper component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -89,6 +80,7 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <AuthProvider>
           <Router>
@@ -123,7 +115,9 @@ const App: React.FC = () => {
                 path="/time-log"
                 element={
                   <ProtectedRoute>
-                    <Home />
+                    <MainLayout>
+                      <TimeLog />
+                    </MainLayout>
                   </ProtectedRoute>
                 }
               />
@@ -141,7 +135,9 @@ const App: React.FC = () => {
                 path="/tasks"
                 element={
                   <ProtectedRoute>
-                    <Home />
+                    <MainLayout>
+                      <Tasks />
+                    </MainLayout>
                   </ProtectedRoute>
                 }
               />

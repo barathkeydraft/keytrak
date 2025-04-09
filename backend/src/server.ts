@@ -6,13 +6,14 @@ import authRoutes from './routes/authRoutes';
 import timeLogRoutes from './routes/timeLogRoutes';
 import taskRoutes from './routes/taskRoutes';
 import userRoutes from './routes/userRoutes';
+import attendanceRoutes from './routes/attendanceRoutes';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/time-logs', timeLogRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/attendance', attendanceRoutes);
 
 // Basic health check route
 app.get('/health', (req, res) => {

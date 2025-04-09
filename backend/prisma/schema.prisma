@@ -21,6 +21,7 @@ model User {
   timeLogs  TimeLog[]
   tasks     Task[]   @relation("AssignedTasks")
   createdTasks Task[] @relation("TaskCreator")
+  attendance  Attendance[]
 }
 
 model Task {
@@ -51,6 +52,19 @@ model TimeLog {
   task      Task?    @relation(fields: [taskId], references: [id])
 }
 
+model Attendance {
+  id          String   @id @default(uuid())
+  type        AttendanceType
+  timestamp   DateTime @default(now())
+  latitude    Float
+  longitude   Float
+  locationName String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 enum Role {
   SUPER_ADMIN
   ADMIN
@@ -66,4 +80,9 @@ enum TaskStatus {
 enum TimeLogType {
   WORK
   BREAK
+}
+
+enum AttendanceType {
+  LOGIN
+  LOGOUT
 } 
