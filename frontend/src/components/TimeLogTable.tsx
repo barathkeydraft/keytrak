@@ -164,7 +164,7 @@ const TimeLogTable: React.FC = () => {
                           }}
                           onClick={() => handleStartEditing(log.id)}
                         >
-                          {log.notes || 'Click to add description'}
+                          {log.notes || 'Define Here'}
                         </Typography>
                       )}
                       {editingId === log.id ? (

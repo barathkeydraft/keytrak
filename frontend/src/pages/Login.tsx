@@ -10,8 +10,12 @@ import {
   Button,
   Alert,
   Paper,
+  InputAdornment,
+  useTheme,
 } from '@mui/material';
+import { Email, Lock } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
+import Logo from '../components/Logo';
 
 const validationSchema = yup.object({
   email: yup
@@ -29,6 +33,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [error, setError] = useState<string>('');
+  const theme = useTheme();
 
   const from = location.state?.from?.pathname || '/';
 
@@ -49,81 +54,156 @@ const Login: React.FC = () => {
   });
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Box
+      sx={{
+        height: '100vh',
+        width: '100vw',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: 'url(https://images.pexels.com/photos/1509534/pexels-photo-1509534.jpeg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1,
+        },
+      }}
+    >
       <Box
         sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          position: 'relative',
+          zIndex: 2,
+          width: '100%',
+          maxWidth: '400px',
+          margin: '0 20px',
         }}
       >
         <Paper
           elevation={3}
           sx={{
             padding: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
             width: '100%',
+            borderRadius: 2,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(10px)',
           }}
         >
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          {error && (
-            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
-              {error}
-            </Alert>
-          )}
           <Box
-            component="form"
-            onSubmit={formik.handleSubmit}
-            sx={{ mt: 1, width: '100%' }}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+            }}
           >
-            <TextField
-              margin="normal"
-              fullWidth
-              id="email"
-              name="email"
-              label="Email Address"
-              autoComplete="email"
-              autoFocus
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+            <Box sx={{ mb: 1 }}>
+              <Logo />
+            </Box>
+            <Typography 
+              component="h1" 
+              variant="h5" 
+              sx={{ 
+                mb: 3,
+                fontWeight: 500,
+              }}
             >
-              Sign In
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link to="/register" style={{ textDecoration: 'none' }}>
-                {"Don't have an account? Sign Up"}
-              </Link>
+              Welcome Back
+            </Typography>
+            {error && (
+              <Alert severity="error" sx={{ width: '100%' }}>
+                {error}
+              </Alert>
+            )}
+            <Box
+              component="form"
+              onSubmit={formik.handleSubmit}
+              sx={{ width: '100%' }}
+            >
+              <TextField
+                margin="normal"
+                fullWidth
+                id="email"
+                name="email"
+                label="Email Address"
+                placeholder="Enter your email"
+                autoComplete="email"
+                autoFocus
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+              />
+              <TextField
+                margin="normal"
+                fullWidth
+                name="password"
+                label="Password"
+                placeholder="Enter your password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  py: 1.5,
+                  borderRadius: 1,
+                  textTransform: 'uppercase',
+                  fontWeight: 500,
+                }}
+              >
+                Sign In
+              </Button>
+              <Box sx={{ textAlign: 'center' }}>
+                <Link
+                  to="/register"
+                  style={{
+                    textDecoration: 'none',
+                    color: theme.palette.primary.main,
+                  }}
+                >
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Box>
             </Box>
           </Box>
         </Paper>
       </Box>
-    </Container>
+    </Box>
   );
 };
 
