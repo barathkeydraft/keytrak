@@ -9,11 +9,10 @@ const router = express.Router();
 // Public routes
 router.post('/register', validateRegistration, register);
 router.post('/login', validateLogin, login);
+router.post('/logout', logout);
 
 // Protected routes
-router.use(authenticateToken);
-router.post('/logout', logout);
-router.get('/me', getCurrentUser);
-router.get('/employees', isAdmin, getEmployees);
+router.get('/me', authenticateToken, getCurrentUser);
+router.get('/employees', authenticateToken, isAdmin, getEmployees);
 
 export default router; 
