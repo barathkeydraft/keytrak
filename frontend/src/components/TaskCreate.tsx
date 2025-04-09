@@ -8,10 +8,13 @@ interface User {
   email: string;
 }
 
+export type TaskStatus = 'Planned' | 'In-Progress' | 'Complete';
+
 const TaskCreate: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [assigneeId, setAssigneeId] = useState('');
+  const [status, setStatus] = useState<TaskStatus>('Planned');
   const [employees, setEmployees] = useState<User[]>([]);
   const { token } = useAuth();
 
@@ -49,6 +52,7 @@ const TaskCreate: React.FC = () => {
           name,
           description,
           assigneeId,
+          status,
         }),
       });
 
@@ -57,6 +61,7 @@ const TaskCreate: React.FC = () => {
         setName('');
         setDescription('');
         setAssigneeId('');
+        setStatus('Planned');
         // You might want to trigger a refresh of the task list here
       }
     } catch (error) {
@@ -92,12 +97,26 @@ const TaskCreate: React.FC = () => {
           value={assigneeId}
           onChange={(e) => setAssigneeId(e.target.value)}
           label="Assign To"
+          required
         >
           {employees.map((employee) => (
             <MenuItem key={employee.id} value={employee.id}>
               {employee.name}
             </MenuItem>
           ))}
+        </Select>
+      </FormControl>
+      <FormControl fullWidth margin="normal">
+        <InputLabel>Status</InputLabel>
+        <Select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as TaskStatus)}
+          label="Status"
+          required
+        >
+          <MenuItem value="Planned">Planned</MenuItem>
+          <MenuItem value="In-Progress">In Progress</MenuItem>
+          <MenuItem value="Complete">Complete</MenuItem>
         </Select>
       </FormControl>
       <Button

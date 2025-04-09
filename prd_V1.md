@@ -61,14 +61,15 @@ FR-TIME-002: Employees must be able to stop the work timer with a single click.
 FR-TIME-003: The system must record the start and end time of each work session.
 FR-TIME-004: Employees must be able to start and stop break timers.
 FR-TIME-005: The system must calculate the total work hours for each day.
-FR-TIME-006: The system must support split shift tracking (multiple work sessions per day).
+FR-TIME-006: The system must show the logs of break and work log taken in a table 
 
 3.1.3 Task Management:
 
-FR-TASK-001: Admins must be able to create new tasks with a name and description.
+FR-TASK-001: Admins must be able to create new tasks with a name and description and assign it to Employees
 FR-TASK-002: Employees must be able to select a task from a dropdown list when starting the work timer.
 FR-TASK-003: Tasks must have a status (Planned, In-Progress, Complete).
 FR-TASK-004: The system must allow employees to update the status of a task.
+FR-TASK-005: Employees can create a own task and select in the drop-down list when the starting the work timer starts, tasks assigned for them can be shown in a table which are assigned for today
 
 3.1.4 Reporting:
 
