@@ -13,9 +13,16 @@ import {
   MenuItem,
   Typography,
   SelectChangeEvent,
+  IconButton,
+  Tooltip,
+  Stack,
+  Button,
 } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import AddIcon from '@mui/icons-material/Add';
 import { useAuth } from '../contexts/AuthContext';
 import { TaskStatus } from './TaskCreate';
+import EmployeeTaskCreate from './EmployeeTaskCreate';
 
 interface Task {
   id: string;
@@ -28,11 +35,12 @@ interface Task {
 
 const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { token } = useAuth();
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/tasks', {
+      const response = await fetch('http://localhost:3001/api/tasks?today=true', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -52,7 +60,7 @@ const TaskList: React.FC = () => {
 
   const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/${taskId}/status`, {
+      const response = await fetch(`http://localhost:3001/api/tasks/${taskId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -74,9 +82,27 @@ const TaskList: React.FC = () => {
 
   return (
     <Box sx={{ mt: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Today's Tasks
-      </Typography>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+        <Typography variant="h6">
+          Today's Tasks
+        </Typography>
+        <Stack direction="row" spacing={1}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            Create Task
+          </Button>
+          <Tooltip title="Refresh tasks">
+            <IconButton onClick={fetchTasks} size="small">
+              <RefreshIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </Stack>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -88,30 +114,44 @@ const TaskList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tasks.map((task) => (
-              <TableRow key={task.id}>
-                <TableCell>{task.name}</TableCell>
-                <TableCell>{task.description}</TableCell>
-                <TableCell>{task.assigneeName}</TableCell>
-                <TableCell>
-                  <FormControl size="small">
-                    <Select
-                      value={task.status}
-                      onChange={(e: SelectChangeEvent) => 
-                        handleStatusChange(task.id, e.target.value as TaskStatus)
-                      }
-                    >
-                      <MenuItem value="Planned">Planned</MenuItem>
-                      <MenuItem value="In-Progress">In Progress</MenuItem>
-                      <MenuItem value="Complete">Complete</MenuItem>
-                    </Select>
-                  </FormControl>
+            {tasks.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  No tasks assigned for today
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              tasks.map((task) => (
+                <TableRow key={task.id}>
+                  <TableCell>{task.name}</TableCell>
+                  <TableCell>{task.description}</TableCell>
+                  <TableCell>{task.assigneeName}</TableCell>
+                  <TableCell>
+                    <FormControl size="small">
+                      <Select
+                        value={task.status}
+                        onChange={(e: SelectChangeEvent) => 
+                          handleStatusChange(task.id, e.target.value as TaskStatus)
+                        }
+                      >
+                        <MenuItem value="PLANNED">Planned</MenuItem>
+                        <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+                        <MenuItem value="COMPLETE">Complete</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <EmployeeTaskCreate
+        open={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onTaskCreated={fetchTasks}
+      />
     </Box>
   );
 };
