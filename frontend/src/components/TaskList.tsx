@@ -21,8 +21,9 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AddIcon from '@mui/icons-material/Add';
 import { useAuth } from '../contexts/AuthContext';
-import { TaskStatus } from './TaskCreate';
+import { TaskStatus } from '../types/task';
 import EmployeeTaskCreate from './EmployeeTaskCreate';
+import AdminTaskCreate from './AdminTaskCreate';
 
 interface Task {
   id: string;
@@ -36,7 +37,7 @@ interface Task {
 const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   const fetchTasks = async () => {
     try {
@@ -79,6 +80,8 @@ const TaskList: React.FC = () => {
       console.error('Error updating task status:', error);
     }
   };
+
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
     <Box sx={{ mt: 3 }}>
@@ -147,11 +150,19 @@ const TaskList: React.FC = () => {
         </Table>
       </TableContainer>
 
-      <EmployeeTaskCreate
-        open={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onTaskCreated={fetchTasks}
-      />
+      {isAdmin ? (
+        <AdminTaskCreate
+          open={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onTaskCreated={fetchTasks}
+        />
+      ) : (
+        <EmployeeTaskCreate
+          open={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onTaskCreated={fetchTasks}
+        />
+      )}
     </Box>
   );
 };

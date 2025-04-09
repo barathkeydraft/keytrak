@@ -11,6 +11,7 @@ import {
   ListItemText,
   Toolbar,
   Button,
+  Divider,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -18,8 +19,10 @@ import {
   People,
   Assignment,
   ExitToApp,
+  Assessment,
+  Home as HomeIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logo';
 
@@ -31,8 +34,9 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -44,26 +48,53 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   };
 
   const menuItems = [
+    { text: 'Home', icon: <HomeIcon />, path: '/' },
     { text: 'Time Log', icon: <AccessTime />, path: '/time-log' },
+    { text: 'Tasks', icon: <Assignment />, path: '/tasks' },
+    { text: 'Reports', icon: <Assessment />, path: '/reports' },
+  ];
+
+  const adminMenuItems = [
     { text: 'User Management', icon: <People />, path: '/users' },
-    { text: 'Task Creation', icon: <Assignment />, path: '/tasks' },
   ];
 
   const drawer = (
     <div>
-      <Toolbar />
+      <Toolbar>
+        <Logo variant="dark" />
+      </Toolbar>
+      <Divider />
       <List>
         {menuItems.map((item) => (
           <ListItem
             button
             key={item.text}
             onClick={() => navigate(item.path)}
+            selected={location.pathname === item.path}
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
       </List>
+      {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+        <>
+          <Divider />
+          <List>
+            {adminMenuItems.map((item) => (
+              <ListItem
+                button
+                key={item.text}
+                onClick={() => navigate(item.path)}
+                selected={location.pathname === item.path}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItem>
+            ))}
+          </List>
+        </>
+      )}
     </div>
   );
 
@@ -87,7 +118,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Logo variant="light" />
           <Box sx={{ flexGrow: 1 }} />
           <Button color="inherit" onClick={handleLogout} startIcon={<ExitToApp />}>
             Logout

@@ -10,7 +10,6 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import TimeTracker from '../components/TimeTracker';
 import TimeLogTable from '../components/TimeLogTable';
-import TaskCreate from '../components/TaskCreate';
 import TaskList from '../components/TaskList';
 
 interface TabPanelProps {
@@ -39,57 +38,41 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const Home: React.FC = () => {
-  const { user } = useAuth();
-  const [tabValue, setTabValue] = React.useState(0);
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
+const Home: React.FC = () => {
+  const [value, setValue] = React.useState(0);
+  const { user } = useAuth();
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
   };
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ display: 'grid', gap: 3 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h4" gutterBottom>
-            Welcome, {user?.name}!
-          </Typography>
-          <Typography variant="body1" paragraph>
-            Track your work time and manage your tasks efficiently.
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Your Profile Information:
-            </Typography>
-            <Typography>
-              <strong>Email:</strong> {user?.email}
-            </Typography>
-            <Typography>
-              <strong>Role:</strong> {user?.role}
-            </Typography>
-          </Box>
-        </Paper>
-        <Paper elevation={3}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={tabValue} onChange={handleTabChange} aria-label="basic tabs example">
-              <Tab label="Time Tracking" />
-              <Tab label="Task Management" />
-            </Tabs>
-          </Box>
-          <TabPanel value={tabValue} index={0}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
-              <TimeTracker />
-              <TimeLogTable />
-            </Box>
-          </TabPanel>
-          <TabPanel value={tabValue} index={1}>
-            <Box sx={{ display: 'grid', gap: 3 }}>
-              {user?.role === 'ADMIN' && <TaskCreate />}
-              <TaskList />
-            </Box>
-          </TabPanel>
-        </Paper>
-      </Box>
+    <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Welcome, {user?.name}!
+      </Typography>
+      <Paper sx={{ width: '100%' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+            <Tab label="Time Tracking" {...a11yProps(0)} />
+            <Tab label="Task Management" {...a11yProps(1)} />
+          </Tabs>
+        </Box>
+        <TabPanel value={value} index={0}>
+          <TimeTracker />
+          <TimeLogTable />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <TaskList />
+        </TabPanel>
+      </Paper>
     </Container>
   );
 };
