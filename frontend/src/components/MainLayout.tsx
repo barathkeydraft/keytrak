@@ -63,6 +63,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   ];
 
   const adminMenuItems = [
+    { text: 'Admin Dashboard', icon: <Assessment />, path: '/admin' },
     { text: 'User Management', icon: <People />, path: '/users' },
   ];
 

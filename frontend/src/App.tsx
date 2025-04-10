@@ -15,6 +15,7 @@ import Tasks from './pages/Tasks';
 import TimeLog from './pages/TimeLog';
 import UserManagement from './components/UserManagement';
 import Reports from './pages/Reports';
+import AdminDashboard from './pages/AdminDashboard';
 import theme from './theme';
 
 // Initialize dayjs plugins
@@ -127,6 +128,16 @@ const App: React.FC = () => {
                   <AdminRoute>
                     <MainLayout>
                       <UserManagement />
+                    </MainLayout>
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <MainLayout>
+                      <AdminDashboard />
                     </MainLayout>
                   </AdminRoute>
                 }
